@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vòng 2 – Săn kho vàng | 7 đội</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
+<style>
+:root{--bg:#17152b;--panel:#24213d;--panel2:#302b50;--ink:#fff8e9;--mut:#c2badb;--gold:#ffc857;--pink:#ff6685;--cyan:#5de0d0;--line:#494268;--green:#62d6a5;--red:#ff6b6b}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 15% 5%,#45336e 0,transparent 30%),radial-gradient(circle at 90% 20%,#254e68 0,transparent 28%),var(--bg);color:var(--ink);font:15px/1.55 "Be Vietnam Pro",sans-serif;min-height:100vh}
+.wrap{max-width:1050px;margin:auto;padding:22px 16px 50px}h1,h2,h3,.btn,.brand{font-family:"Baloo 2",sans-serif}h1{font-size:clamp(30px,6vw,48px);line-height:1.05;margin:8px 0}h2{margin:0 0 10px;font-size:27px}h3{margin:0 0 8px;font-size:20px}.brand{color:var(--gold);font-weight:800;letter-spacing:.5px}.muted{color:var(--mut)}.top{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:18px}.tag{display:inline-flex;align-items:center;gap:7px;background:#ffffff13;border:1px solid var(--line);border-radius:99px;padding:6px 12px;color:var(--mut);font-size:13px}
+.card{background:linear-gradient(145deg,#2b2748,#211f38);border:1px solid var(--line);border-radius:22px;padding:20px;box-shadow:0 14px 35px #08071655;margin:14px 0}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}.btn{border:0;border-radius:14px;padding:11px 19px;background:linear-gradient(135deg,#ffb84d,#ff6c7d);color:#25152c;font-size:17px;font-weight:800;cursor:pointer;box-shadow:0 4px 0 #a9475c;margin:6px 7px 0 0}.btn.secondary{background:linear-gradient(135deg,#67e4d2,#5c9bff);box-shadow:0 4px 0 #345a9d}.btn.ghost{background:#ffffff12;color:var(--ink);border:1px solid var(--line);box-shadow:none}.btn:disabled{opacity:.45;cursor:not-allowed}
+input,select{background:#17152b;color:var(--ink);border:1px solid var(--line);padding:12px;border-radius:12px;font:inherit;width:100%;margin:5px 0 12px}label{font-weight:700;font-size:13px;color:var(--mut)}
+.team-tile{background:#ffffff0b;border:1px solid var(--line);border-radius:16px;padding:15px}.team-tile strong{font-size:18px}.score{font:800 34px "Baloo 2";color:var(--gold)}.pill{display:inline-block;padding:3px 9px;border-radius:99px;background:#5de0d01c;color:var(--cyan);font-size:12px;font-weight:700}.hero{text-align:center;padding:25px 12px}.hero .emoji{font-size:58px}.hero p{max-width:650px;margin:10px auto;color:var(--mut)}
+.progress{height:9px;background:#ffffff16;border-radius:99px;overflow:hidden;margin:12px 0}.progress i{display:block;height:100%;background:linear-gradient(90deg,var(--cyan),var(--gold));width:0;transition:width .3s}
+.statrow{display:flex;gap:10px;flex-wrap:wrap}.stat{flex:1;min-width:130px;background:#ffffff0b;border:1px solid var(--line);border-radius:15px;padding:12px}.stat b{display:block;font:800 27px "Baloo 2";color:var(--gold)}
+.question{font-size:20px;font-weight:800;margin:12px 0}.choice{display:block;width:100%;text-align:left;padding:13px 15px;border-radius:14px;border:2px solid var(--line);background:#ffffff09;color:var(--ink);font:600 15px inherit;margin:9px 0;cursor:pointer}.choice:hover{border-color:var(--cyan)}.choice.correct{border-color:var(--green);background:#62d6a51c}.choice.wrong{border-color:var(--red);background:#ff6b6b1c}.feedback{padding:13px;border-radius:13px;background:#5de0d015;border-left:4px solid var(--cyan);margin-top:12px}
+.timer{font:800 27px "Baloo 2";color:var(--gold)}.timer.danger{color:var(--red);animation:pulse .7s infinite alternate}@keyframes pulse{to{transform:scale(1.08)}}
+table{width:100%;border-collapse:collapse;margin-top:10px}th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line)}th{color:var(--mut);font-size:12px;text-transform:uppercase}td:last-child,th:last-child{text-align:right}.rank{font-size:20px}
+.notice{border:1px dashed #806dba;border-radius:14px;padding:12px;color:var(--mut);font-size:13px}.hide{display:none!important}.mapbox{background:#17152b;border-radius:16px;padding:10px;border:1px solid var(--line)}svg{width:100%;max-width:430px;display:block;margin:auto;touch-action:none}.sliderrow{display:flex;align-items:center;gap:10px}.sliderrow input{padding:0;accent-color:var(--gold)}.answerrow{display:flex;gap:10px;flex-wrap:wrap}.answerrow>*{flex:1;min-width:100px}
+@media(max-width:600px){.wrap{padding:14px 11px}.card{padding:16px}.top{align-items:flex-start}.question{font-size:18px}th,td{padding:8px 4px;font-size:13px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div><div class="brand">🏭 LOGISTICS CHALLENGE</div><h1>Vòng 2: Săn kho vàng</h1><div class="muted">7 đội tranh tài · Tìm vị trí kho tối ưu · Chinh phục bảng vàng</div></div>
+    <div class="tag">✨ TEAM BATTLE · WEB GAME</div>
+  </header>
+  <main id="app"></main>
+  <footer class="muted" style="text-align:center;font-size:12px;margin-top:25px">Săn kho vàng · Phiên bản thi đấu 7 đội</footer>
+</div>
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyBimaxCn3MghOB-3iwYYipoQpAa9i4KUz0",
+  authDomain: "sankhovang-865cd.firebaseapp.com",
+  databaseURL: "https://sankhovang-865cd-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "sankhovang-865cd",
+  storageBucket: "sankhovang-865cd.firebasestorage.app",
+  messagingSenderId: "440154841083",
+  appId: "1:440154841083:web:ca95eed5e3bc606052b55e",
+  measurementId: "G-FLH99LJY6M"
+};
+
+const KEY='sanKhoVang_7doi_v2';
+const TEAMS=Array.from({length:7},(_,i)=>({id:i+1,name:'Đội '+(i+1)}));
+const HOST_PIN='2026'; // Chủ trì có thể đổi mã PIN tại đây
+const P=[["CH1",2,8,.60],["CH2",6,7,.50],["CH3",8,3,.40],["CH4",3,2,.45],["CH5",10,6,.55]];
+const LN=["A - Bình Tân","B - Thủ Đức","C - Hóc Môn"];
+const V=[10.62,10.094,11.714].map(z=>z*365*.05), FF=[220,260,180];
+const BE=(FF[0]-FF[2])/(V[2]-V[0]);
+let state=loadState(),activeTeam=null,stage=0,pointsThisRun=0,timerInt=null,timeLeft=0,answerLocked=false;
+const app=document.getElementById('app');
+let DB=null,syncOn=false;
+
+function pushTeam(t){
+  if(!DB||!t)return;
+  try{
+    DB.ref('sanKhoVang/teams/t'+t.id).set({
+      id:t.id,
+      name:t.name,
+      score:t.score,
+      done:!!t.done,
+      stage:t.stage||0,
+      joined:!!t.joined,
+      updated:t.updated||null,
+      ts:Date.now()
+    }).catch(()=>{});
+  }catch(e){}
+}
+function syncBadge(){
+  document.querySelectorAll('.syncTag').forEach(el=>{
+    el.textContent=syncOn?'🟢 Đồng bộ trực tiếp':'🟠 Chỉ lưu trên máy này';
+  });
+}
+function startSync(){
+  if(!window.firebase||!firebaseConfig.databaseURL)return;
+  try{
+    if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);
+    DB=firebase.database();
+    DB.ref('.info/connected').on('value',snap=>{syncOn=!!snap.val();syncBadge()});
+    DB.ref('sanKhoVang/teams').on('value',snap=>{
+      const val=snap.val();
+      if(!val)return;
+      Object.values(val).forEach(v=>{
+        const t=state.teams.find(x=>x.id===v.id);
+        if(!t||t.id===activeTeam)return;
+        Object.assign(t,{
+          score:v.score||0,
+          done:!!v.done,
+          stage:v.stage||0,
+          joined:!!v.joined,
+          updated:v.updated||null
+        });
+      });
+      save();
+      if(document.getElementById('scores'))renderHostRows();
+      else updateMiniScore();
+    },()=>{syncOn=false;syncBadge()});
+  }catch(e){syncOn=false;syncBadge()}
+}
+
+function setStage(n){let t=team();t.stage=n;t.joined=true;save();pushTeam(t)}
+function statusHTML(t){return t.done?'<span class="pill">✅ Hoàn thành</span>':t.stage>=1?`<span class="pill" style="background:#ffc85722;color:var(--gold)">▶ Đang làm thử thách ${t.stage}/3</span>`:t.joined?'<span class="muted">Đã vào, chờ bắt đầu</span>':'<span class="muted">Chưa vào</span>'}
+function hostRowsHTML(){return state.teams.slice().sort((a,b)=>b.score-a.score||a.id-b.id).map((t,i)=>`<tr><td><span class="rank">${['🥇','🥈','🥉'][i]||'🏅'}</span> ${esc(t.name)}</td><td><b style="font-size:20px;color:var(--gold)">${t.score}</b></td><td>${statusHTML(t)}</td><td>${t.updated||'—'}</td></tr>`).join('')}
+function renderHostRows(){let b=document.getElementById('scores');if(!b)return;b.innerHTML=hostRowsHTML();document.getElementById('doneCount').textContent=state.teams.filter(t=>t.done).length+'/7';document.getElementById('sum').textContent=state.teams.reduce((a,t)=>a+t.score,0);let p=document.getElementById('playCount');if(p)p.textContent=state.teams.filter(t=>!t.done&&t.stage>=1).length}
+function blank(){return {teams:TEAMS.map(t=>({id:t.id,name:t.name,score:0,done:false,updated:null,stage:0,joined:false})),history:[],started:false}}
+function loadState(){try{let s=JSON.parse(localStorage.getItem(KEY));if(s&&s.teams?.length===7)return s}catch(e){}return blank()}
+function save(){localStorage.setItem(KEY,JSON.stringify(state))}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function team(){return state.teams.find(t=>t.id===activeTeam)}
+function fmt(n,d=2){return Number(n).toFixed(d).replace('.',',')}
+function dist(x,y,p){return Math.hypot(x-p[1],y-p[2])}
+function cost(x,y){return P.reduce((s,p)=>s+p[3]*dist(x,y,p),0)}
+let gx=5,gy=5;for(let k=0;k<5000;k++){let nx=0,ny=0,d=0;P.forEach(p=>{let w=p[3]/(dist(gx,gy,p)||1e-9);nx+=p[1]*w;ny+=p[2]*w;d+=w});gx=nx/d;gy=ny/d}
+const ZS=cost(gx,gy);
+function addPoints(n,label){let t=team();t.score+=n;t.updated=new Date().toLocaleTimeString('vi-VN');pointsThisRun+=n;state.history.push({team:t.name,points:n,label,time:Date.now()});save();pushTeam(t);updateMiniScore()}
+function updateMiniScore(){let el=document.getElementById('myScore');if(el&&team())el.textContent=team().score+' điểm'}
+function stopTimer(){if(timerInt)clearInterval(timerInt);timerInt=null}
+function startTimer(seconds,onEnd){stopTimer();timeLeft=seconds;renderTimer();timerInt=setInterval(()=>{timeLeft--;renderTimer();if(timeLeft<=0){stopTimer();onEnd()}},1000)}
+function renderTimer(){let el=document.getElementById('timer');if(el){el.textContent='⏱ '+timeLeft+'s';el.classList.toggle('danger',timeLeft<=10)}}
+function home(){
+ stopTimer();activeTeam=null;
+ app.innerHTML=`<section class="card hero"><div class="emoji">🗝️💰</div><h2>Chào mừng đến với Săn kho vàng!</h2><p>7 đội sẽ cùng giải các thử thách logistics. Mỗi đội có bảng điểm riêng; chủ trì có bảng tổng hợp để theo dõi toàn bộ cuộc chơi.</p></section>
+ <div class="grid">
+  <section class="card"><h2>🎮 Đội chơi</h2><p class="muted">Chọn đúng đội của bạn để bắt đầu. Không chọn đội khác nhé!</p><label>Chọn đội</label><select id="teamSelect">${TEAMS.map(t=>`<option value="${t.id}">${t.name}</option>`).join('')}</select><button class="btn" id="join">Vào cuộc 🚀</button></section>
+  <section class="card"><h2>👑 Khu vực chủ trì</h2><p class="muted">Xem điểm, thứ hạng, tiến độ của cả 7 đội và quản lý cuộc chơi.</p><label>Mã PIN chủ trì</label><input id="pin" type="password" placeholder="Nhập mã PIN"><button class="btn secondary" id="host">Mở bảng điều khiển</button></section>
+ </div>
+ <div class="notice"><span class="syncTag"></span> · Khi hiện 🟢, điểm của đội được gửi thẳng lên bảng điều khiển của chủ trì. Nếu hiện 🟠 thì điểm chỉ lưu trên máy này và chủ trì sẽ không thấy.</div>`;
+ document.getElementById('join').onclick=()=>{activeTeam=+document.getElementById('teamSelect').value;stage=0;pointsThisRun=0;if(team().done){if(!confirm('Đội này đã hoàn thành. Chơi lại sẽ đặt lại điểm của đội này. Tiếp tục?'))return;team().score=0;team().done=false;save()}team().stage=0;team().joined=true;save();pushTeam(team());intro()};
+ document.getElementById('host').onclick=()=>{if(document.getElementById('pin').value===HOST_PIN)hostPanel();else alert('Mã PIN chưa đúng!')};syncBadge();
+}
+function intro(){
+ app.innerHTML=`<section class="card hero"><div class="tag">ĐANG THI ĐẤU · ${team().name.toUpperCase()}</div> <span class="tag syncTag"></span><div class="emoji">🧭</div><h2>Đội ${activeTeam} – Sẵn sàng săn kho!</h2><p>Nhiệm vụ: tìm vị trí kho trung tâm tối ưu, xác định điểm hòa vốn và chọn phương án kho phù hợp. Hãy phối hợp nhanh và chính xác.</p><div class="statrow"><div class="stat"><span class="muted">Điểm hiện tại</span><b id="myScore">${team().score}</b></div><div class="stat"><span class="muted">Số thử thách</span><b>3</b></div><div class="stat"><span class="muted">Điểm tối đa</span><b>15</b></div></div><button class="btn" id="start">Bắt đầu nhiệm vụ 1 ⚡</button><button class="btn ghost" id="back">Thoát</button></section>`;
+ syncBadge();document.getElementById('start').onclick=()=>weber();document.getElementById('back').onclick=home;
+}
+function header(n,title){return `<div class="top"><div><div class="tag">${team().name} · THỬ THÁCH ${n}/3</div><h2>${title}</h2></div><div class="stat"><span class="muted">Điểm đội</span><b id="myScore">${team().score}</b></div></div><div class="progress"><i style="width:${(n-1)/3*100}%"></i></div>`}
+function weber(){
+ stage=1;setStage(1);answerLocked=false;let x=5,y=5,locked=false;
+ app.innerHTML=`<section class="card">${header(1,'📍 Định vị kho trung tâm')}<p class="muted">Kéo biểu tượng 🏭 trên bản đồ hoặc điều chỉnh thanh X, Y. Mục tiêu là làm tổng Q × D nhỏ nhất.</p><div class="mapbox"><svg id="map" viewBox="0 0 320 320"></svg></div><div class="statrow"><div class="stat">Tọa độ X<b id="vx">5,00</b></div><div class="stat">Tọa độ Y<b id="vy">5,00</b></div><div class="stat">Tổng Z<b id="z">—</b></div></div><div class="sliderrow">X <input id="sx" type="range" min="0" max="10" step=".05" value="5"></div><div class="sliderrow">Y <input id="sy" type="range" min="0" max="10" step=".05" value="5"></div><div class="top"><span class="muted">Nhiệt kế: càng nóng càng gần đáp án 🔥</span><span id="heat" class="pill">Đang dò tìm</span></div><div class="progress"><i id="therm"></i></div><div class="top"><span class="timer" id="timer">⏱ 20s</span><span class="muted">Tối đa 5 điểm · Có thưởng tốc độ</span></div><button class="btn" id="lock">Chốt tọa độ kho 📌</button><div id="fb"></div></section>`;
+ const map=document.getElementById('map'),X=v=>20+v*28,Y=v=>300-v*28;
+ function draw(){let s='';for(let i=0;i<=10;i+=2)s+=`<line x1="${X(i)}" y1="${Y(0)}" x2="${X(i)}" y2="${Y(10)}" stroke="#494268"/><line x1="${X(0)}" y1="${Y(i)}" x2="${X(10)}" y2="${Y(i)}" stroke="#494268"/>`;
+ P.forEach(p=>s+=`<line x1="${X(x)}" y1="${Y(y)}" x2="${X(p[1])}" y2="${Y(p[2])}" stroke="#ff6685" stroke-opacity=".55" stroke-width="${p[3]*7}" stroke-dasharray="5 4"/>`);
+ P.forEach(p=>s+=`<text x="${X(p[1])}" y="${Y(p[2])+8}" font-size="20" text-anchor="middle">🏪</text><text x="${X(p[1])}" y="${Y(p[2])+24}" font-size="9" text-anchor="middle" fill="#fff">${p[0]}</text>`);
+ s+=`<text x="${X(x)}" y="${Y(y)+10}" font-size="28" text-anchor="middle">🏭</text>`;map.innerHTML=s;
+ let z=cost(x,y),ratio=z/ZS,pct=Math.max(0,Math.min(100,100-(ratio-1)*500));document.getElementById('vx').textContent=fmt(x);document.getElementById('vy').textContent=fmt(y);document.getElementById('z').textContent=fmt(z,3);document.getElementById('therm').style.width=pct+'%';document.getElementById('heat').textContent=ratio<1.01?'🔥 Rất nóng':ratio<1.03?'🌤 Khá gần':'🧊 Còn xa';
+ }
+ function setPos(nx,ny){if(locked)return;x=Math.max(0,Math.min(10,nx));y=Math.max(0,Math.min(10,ny));document.getElementById('sx').value=x;document.getElementById('sy').value=y;draw()}
+ map.onpointerdown=e=>{if(locked)return;map.setPointerCapture(e.pointerId);move(e)};map.onpointermove=e=>{if(e.buttons)move(e)};
+ function move(e){let r=map.getBoundingClientRect();setPos(Math.round((((e.clientX-r.left)/r.width*320-20)/28)*20)/20,Math.round(((300-(e.clientY-r.top)/r.height*320)/28)*20)/20)}
+ document.getElementById('sx').oninput=e=>setPos(+e.target.value,y);document.getElementById('sy').oninput=e=>setPos(x,+e.target.value);
+ function finish(){if(locked)return;locked=true;stopTimer();document.getElementById('sx').disabled=document.getElementById('sy').disabled=true;document.getElementById('lock').disabled=true;
+ let okx=Math.abs(x-gx)<=.1,oky=Math.abs(y-gy)<=.1,pts=okx&&oky?5:(okx||oky)?2:0,bonus=timeLeft>12&&pts===5?1:0;addPoints(pts+bonus,'Định vị kho');draw();
+ document.getElementById('fb').innerHTML=`<div class="feedback"><b>${pts+bonus} điểm!</b> ${bonus?'Có thêm 1 điểm thưởng tốc độ. ':''}Đáp án gần đúng: X = ${fmt(gx,2)}, Y = ${fmt(gy,2)}; Z = ${fmt(ZS,3)} tấn·km/ngày. Bạn được ${pts} điểm cơ bản${bonus?' + 1 điểm tốc độ':''}.</div><button class="btn" id="next">Qua nhiệm vụ 2 ➜</button>`;document.getElementById('next').onclick=breakEven}
+ document.getElementById('lock').onclick=finish;draw();startTimer(20,()=>{document.getElementById('lock').textContent='Hết giờ – chốt kết quả';finish()});
+}
+function breakEven(){
+ stage=2;setStage(2);answerLocked=false;let x=1;
+ app.innerHTML=`<section class="card">${header(2,'⚖️ Cuộc đua hòa vốn')}<p class="muted">Điều chỉnh hệ số nhu cầu x để tìm điểm mà kho A và kho C có tổng chi phí bằng nhau. Đội có 20 giây!</p><div class="question">Ở mức nhu cầu nào, kho A và kho C có chi phí bằng nhau?</div><div class="sliderrow">Hệ số x <input id="sl" type="range" min="0" max="5" step=".01" value="1"></div><div class="statrow"><div class="stat">Hệ số đang chọn<b id="xv">1,00</b></div><div class="stat">Điểm hòa vốn<b>${fmt(BE,2)} lần</b></div></div><div id="bars"></div><div class="top"><span class="timer" id="timer">⏱ 20s</span><span class="pill">Tối đa 5 điểm</span></div><button class="btn" id="lock">Chốt điểm hòa vốn 🎯</button><div id="fb"></div></section>`;
+ function costs(i,v){return FF[i]+V[i]*v}
+ function draw(){let vals=LN.map((_,i)=>costs(i,x)),max=Math.max(...vals);document.getElementById('xv').textContent=fmt(x);document.getElementById('bars').innerHTML=vals.map((v,i)=>`<div style="margin:12px 0"><div class="top"><b>${LN[i]}</b><span>${fmt(v,1)} triệu</span></div><div class="progress"><i style="width:${v/max*100}%;background:${i===vals.indexOf(Math.min(...vals))?'var(--cyan)':'var(--gold)'}"></i></div></div>`).join('')}
+ document.getElementById('sl').oninput=e=>{x=+e.target.value;draw()};draw();
+ function finish(){if(answerLocked)return;answerLocked=true;stopTimer();document.getElementById('lock').disabled=true;document.getElementById('sl').disabled=true;let d=Math.abs(x-BE),pts=d<=.05?5:d<=.2?3:d<=.5?1:0,bonus=timeLeft>12&&pts===5?1:0;addPoints(pts+bonus,'Điểm hòa vốn');document.getElementById('fb').innerHTML=`<div class="feedback"><b>${pts+bonus} điểm!</b> Điểm hòa vốn chuẩn là x = ${fmt(BE,2)} lần nhu cầu hiện tại. ${bonus?'Thưởng tốc độ +1 điểm.':''}</div><button class="btn" id="next">Qua nhiệm vụ 3 ➜</button>`;document.getElementById('next').onclick=finalChoice}
+ document.getElementById('lock').onclick=finish;startTimer(20,finish);
+}
+function finalChoice(){
+ stage=3;setStage(3);answerLocked=false;
+ app.innerHTML=`<section class="card">${header(3,'👑 Quyết định của giám đốc')}<div class="tag">THỬ THÁCH CUỐI · 20 GIÂY</div><div class="question">Với nhu cầu hiện tại (x = 1), đội sẽ chọn kho nào để có tổng chi phí thấp nhất?</div><div id="opts"></div><div class="top"><span class="timer" id="timer">⏱ 20s</span><span class="pill">2 điểm + 1 điểm tốc độ</span></div><div id="fb"></div></section>`;
+ LN.forEach((n,i)=>{let b=document.createElement('button');b.className='choice';b.textContent=n+' – '+fmt(FF[i]+V[i],1)+' triệu đồng';b.onclick=()=>choose(i);document.getElementById('opts').appendChild(b)});
+ function choose(i){if(answerLocked)return;answerLocked=true;stopTimer();let correct=i===2,bonus=timeLeft>10&&correct?1:0,pts=correct?2+bonus:0;addPoints(pts,'Chọn vị trí kho');document.querySelectorAll('.choice').forEach((b,j)=>{b.disabled=true;if(j===2)b.classList.add('correct');else if(j===i)b.classList.add('wrong')});document.getElementById('fb').innerHTML=`<div class="feedback"><b>${correct?'Chính xác! +'+pts+' điểm':'Chưa chính xác – +0 điểm'}</b> Kho C – Hóc Môn có tổng chi phí thấp nhất ở nhu cầu hiện tại (${fmt(FF[2]+V[2],1)} triệu đồng). ${bonus?'Bạn nhận thêm 1 điểm tốc độ!':''}</div><button class="btn" id="finish">Nộp kết quả 🏆</button>`;document.getElementById('finish').onclick=endGame}
+ startTimer(20,()=>choose(-1));
+}
+function endGame(){stopTimer();team().done=true;team().stage=3;save();pushTeam(team());let s=team().score,rank=s>=13?'🏆 Chiến thần logistics':s>=9?'🥇 Chuyên gia kho vận':s>=5?'📦 Nhà thám hiểm kho':'🐣 Tân binh logistics';
+ app.innerHTML=`<section class="card hero"><div class="emoji">🎉🏆</div><div class="tag">${team().name} ĐÃ HOÀN THÀNH</div><h2>${rank}</h2><div class="score">${s} điểm</div><p>Đội đã hoàn thành 3 thử thách của vòng Săn kho vàng. Hãy chờ chủ trì công bố kết quả chung cuộc!</p><button class="btn" id="home">Về màn hình đầu</button></section>`;
+ document.getElementById('home').onclick=home}
+function hostPanel(){
+ stopTimer();activeTeam=null;
+ const rows=hostRowsHTML;
+ app.innerHTML=`<section class="card"><div class="top"><div><div class="tag">👑 CHẾ ĐỘ CHỦ TRÌ</div> <span class="tag syncTag"></span><h2>Bảng điều khiển 7 đội</h2></div><button class="btn ghost" id="back">Thoát</button></div><div class="statrow"><div class="stat">Tổng đội<b>7</b></div><div class="stat">Đang chơi<b id="playCount">${state.teams.filter(t=>!t.done&&t.stage>=1).length}</b></div><div class="stat">Đã hoàn thành<b id="doneCount">${state.teams.filter(t=>t.done).length}/7</b></div><div class="stat">Tổng điểm<b id="sum">${state.teams.reduce((s,t)=>s+t.score,0)}</b></div></div><h3 style="margin-top:20px">🏆 Bảng xếp hạng trực tiếp</h3><div style="overflow-x:auto"><table><thead><tr><th>Đội</th><th>Điểm</th><th>Trạng thái</th><th>Cập nhật</th></tr></thead><tbody id="scores">${rows()}</tbody></table></div><div class="grid" style="margin-top:16px"><button class="btn secondary" id="refresh">↻ Cập nhật bảng điểm</button><button class="btn ghost" id="export">Tải bảng điểm CSV</button><button class="btn ghost" id="reset">Đặt lại điểm 7 đội</button></div><div class="notice" style="margin-top:14px">Bảng tự cập nhật ngay khi có đội ghi điểm hoặc chuyển thử thách, không cần bấm làm mới.</div></section>`;
+ document.getElementById('back').onclick=home;document.getElementById('refresh').onclick=hostPanel;syncBadge();
+ document.getElementById('reset').onclick=()=>{if(confirm('Bạn chắc chắn muốn xóa điểm và trạng thái của cả 7 đội?')){state=blank();save();state.teams.forEach(pushTeam);hostPanel()}};
+ document.getElementById('export').onclick=()=>{let csv='Đội,Điểm,Trạng thái\n'+state.teams.map(t=>`${t.name},${t.score},${t.done?'Hoàn thành':'Chưa hoàn thành'}`).join('\n');let a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'}));a.download='bang-diem-san-kho-vang.csv';a.click();URL.revokeObjectURL(a.href)};
+}
+window.addEventListener('storage',e=>{if(e.key===KEY){state=loadState();if(document.getElementById('scores'))hostPanel();else updateMiniScore()}});
+startSync();home();
+</script>
+</body>
+</html>
